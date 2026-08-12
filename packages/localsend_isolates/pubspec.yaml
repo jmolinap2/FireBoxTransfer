@@ -1,5 +1,5 @@
 name: localsend_isolates
-description: LocalSend network isolates and Rust bindings
+description: FireBoxTransfer network isolates and Rust bindings
 publish_to: "none"
 
 version: 0.0.1

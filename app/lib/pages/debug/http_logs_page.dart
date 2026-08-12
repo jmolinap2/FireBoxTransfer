@@ -1,8 +1,8 @@
+import 'package:fireboxtransfer_app/provider/logging/http_logs_provider.dart';
+import 'package:fireboxtransfer_app/widget/copyable_text.dart';
+import 'package:fireboxtransfer_app/widget/responsive_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:localsend_app/provider/logging/http_logs_provider.dart';
-import 'package:localsend_app/widget/copyable_text.dart';
-import 'package:localsend_app/widget/responsive_list_view.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 final _dateFormat = DateFormat.Hms();

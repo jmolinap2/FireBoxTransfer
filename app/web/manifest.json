@@ -1,11 +1,11 @@
 {
-  "name": "localsend_app",
-  "short_name": "localsend_app",
+  "name": "fireboxtransfer_app",
+  "short_name": "fireboxtransfer_app",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0175C2",
   "theme_color": "#0175C2",
-  "description": "A new Flutter project.",
+  "description": "Transfer and manage files between your PC and phone over your local network.",
   "orientation": "portrait-primary",
   "prefer_related_applications": false,
   "icons": [

@@ -9,7 +9,7 @@ AppDir:
   app_info:
     id: org.localsend.localsend_app
     name: LocalSend
-    icon: localsend
+    icon: fireboxtransfer
     version: latest
     exec: localsend_app
     exec_args: $@

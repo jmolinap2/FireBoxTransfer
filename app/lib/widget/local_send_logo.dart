@@ -1,10 +1,10 @@
+import 'package:fireboxtransfer_app/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
-import 'package:localsend_app/gen/assets.gen.dart';
 
-class LocalSendLogo extends StatelessWidget {
+class AppLogo extends StatelessWidget {
   final bool withText;
 
-  const LocalSendLogo({required this.withText});
+  const AppLogo({required this.withText});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class LocalSendLogo extends StatelessWidget {
         children: [
           logo,
           const Text(
-            'LocalSend',
+            'FireBoxTransfer',
             style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),

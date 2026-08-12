@@ -1,3 +1,3 @@
-# LocalSend Signaling Server
+# FireBoxTransfer Signaling Server
 
-A signaling server for LocalSend. Using Rust and WebSockets.
+A WebRTC signaling server for FireBoxTransfer. Using Rust and WebSockets.

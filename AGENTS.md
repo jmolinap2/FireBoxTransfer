@@ -1,6 +1,6 @@
 # AGENTS.md
 
-LocalSend disallows AI generated contributions unless:
+FireBoxTransfer disallows AI generated contributions unless:
 
 - they are bug fixes or
 - very small or

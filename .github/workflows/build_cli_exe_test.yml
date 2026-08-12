@@ -32,18 +32,18 @@ jobs:
         run: rustup update stable
 
       - name: Compile CLI
-        run: cargo build --release --package localsend-cli
+        run: cargo build --release --package fireboxtransfer-cli
 
-      # The SignPath artifact configuration expects "LocalSend-CLI-*-windows-x86-64.exe"
+      # The SignPath artifact configuration expects "FireBoxTransfer-CLI-*-windows-x86-64.exe"
       - name: Rename CLI executable
-        run: Rename-Item -Path "target\release\localsend-cli.exe" -NewName "LocalSend-CLI-${{ needs.build.outputs.version }}-windows-x86-64.exe"
+        run: Rename-Item -Path "target\release\fireboxtransfer-cli.exe" -NewName "FireBoxTransfer-CLI-${{ needs.build.outputs.version }}-windows-x86-64.exe"
 
       - name: Upload unsigned CLI
         id: unsigned-cli
         uses: actions/upload-artifact@v6
         with:
           name: windows-cli-exe-unsigned
-          path: target\release\LocalSend-CLI-${{ needs.build.outputs.version }}-windows-x86-64.exe
+          path: target\release\FireBoxTransfer-CLI-${{ needs.build.outputs.version }}-windows-x86-64.exe
           if-no-files-found: error
 
       - name: Sign CLI (SignPath)
@@ -62,10 +62,10 @@ jobs:
         continue-on-error: true
         run: |
           $signtool = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\bin\10.*\x64\signtool.exe' | Select-Object -Last 1
-          & $signtool.FullName verify /pa /v "signed\cli\LocalSend-CLI-${{ needs.build.outputs.version }}-windows-x86-64.exe"
+          & $signtool.FullName verify /pa /v "signed\cli\FireBoxTransfer-CLI-${{ needs.build.outputs.version }}-windows-x86-64.exe"
 
       - name: Upload signed CLI
         uses: actions/upload-artifact@v6
         with:
           name: windows-cli-exe-x86-64-result
-          path: signed/cli/LocalSend-CLI-${{ needs.build.outputs.version }}-windows-x86-64.exe
+          path: signed/cli/FireBoxTransfer-CLI-${{ needs.build.outputs.version }}-windows-x86-64.exe

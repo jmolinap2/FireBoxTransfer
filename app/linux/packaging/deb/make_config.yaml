@@ -1,11 +1,8 @@
-display_name: LocalSend
-package_name: localsend
+display_name: FireBoxTransfer
+package_name: fireboxtransfer
 maintainer:
-  name: Tienisto
-  email: dev.tien.donam@gmail.com
-co_authors:
-  - name: TheGB0077
-    email: gb.lima.dev@gmail.com
+  name: FireBoxTransfer
+  email: unset@fireboxtransfer.invalid
 priority: optional
 section: x11
 installed_size: 30600
@@ -22,7 +19,7 @@ dependencies:
   - xdg-user-dirs
 
 postinstall_scripts:
-  - echo "Installed Localsend successfully"
+  - echo "Installed FireBoxTransfer successfully"
 postuninstall_scripts:
   - echo "Sorry to see you go :("
 
@@ -31,7 +28,7 @@ keywords:
   - LAN
   - Files
 
-generic_name: An open source cross-platform alternative to AirDrop
+generic_name: Transfer and manage files between your PC and phone over your local network
 
 categories:
   - GTK

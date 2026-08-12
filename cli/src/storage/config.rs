@@ -17,8 +17,8 @@ pub struct Config {
 }
 
 const CONFIG_TEMPLATE: &str = "\
-# LocalSend CLI configuration. Command-line flags and environment variables
-# (LOCALSEND_ALIAS, LOCALSEND_PORT, LOCALSEND_DESTINATION) take precedence.
+# FireBoxTransfer CLI configuration. Command-line flags and environment variables
+# (FIREBOXTRANSFER_ALIAS, FIREBOXTRANSFER_PORT, FIREBOXTRANSFER_DESTINATION) take precedence.
 
 # Device name shown to other devices (default: the hostname).
 #alias = \"My Device\"

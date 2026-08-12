@@ -1,6 +1,5 @@
-name: localsend_app
-description: An open source cross-platform alternative to AirDrop
-homepage: https://localsend.org/
+name: fireboxtransfer_app
+description: Transfer and manage files between your PC and phone over your local network
 publish_to: "none"
 
 version: 1.17.0+58

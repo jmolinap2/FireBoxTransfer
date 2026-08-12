@@ -1,7 +1,6 @@
-display_name: LocalSend
-packager: Tienisto
-packagerEmail: dev.tien.donam@gmail.com
-url: https://localsend.org
+display_name: FireBoxTransfer
+packager: FireBoxTransfer
+packagerEmail: unset@fireboxtransfer.invalid
 buildArch: x86_64
 license: MIT
 
@@ -16,8 +15,8 @@ keywords:
   - LAN
   - Files
 
-generic_name: An open source cross-platform alternative to AirDrop
-summary: Share files easily with LocalSend
+generic_name: Transfer and manage files between your PC and phone over your local network
+summary: Transfer and manage files between your PC and phone with FireBoxTransfer
 group: Applications/Utilities
 
 categories:

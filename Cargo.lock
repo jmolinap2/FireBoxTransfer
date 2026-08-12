@@ -1371,6 +1371,34 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9844ddc3a6e533d62bba727eb6c28b5d360921d5175e9ff0f1e621a5c590a4d5"
 
 [[package]]
+name = "fireboxtransfer-cli"
+version = "1.17.0"
+dependencies = [
+ "anyhow",
+ "bytes",
+ "clap",
+ "crossterm",
+ "dirs",
+ "futures-util",
+ "gethostname",
+ "localsend",
+ "mime_guess",
+ "pem 4.0.0",
+ "qrcode",
+ "ratatui",
+ "ratatui-explorer",
+ "rcgen 0.14.8",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-stream",
+ "tokio-util",
+ "toml",
+ "unicode-width",
+ "uuid",
+]
+
+[[package]]
 name = "fixedbitset"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2228,34 +2256,6 @@ dependencies = [
  "uuid",
  "webrtc",
  "x509-parser 0.18.1",
-]
-
-[[package]]
-name = "localsend-cli"
-version = "1.17.0"
-dependencies = [
- "anyhow",
- "bytes",
- "clap",
- "crossterm",
- "dirs",
- "futures-util",
- "gethostname",
- "localsend",
- "mime_guess",
- "pem 4.0.0",
- "qrcode",
- "ratatui",
- "ratatui-explorer",
- "rcgen 0.14.8",
- "serde",
- "serde_json",
- "tokio",
- "tokio-stream",
- "tokio-util",
- "toml",
- "unicode-width",
- "uuid",
 ]
 
 [[package]]

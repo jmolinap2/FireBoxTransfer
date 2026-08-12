@@ -1,4 +1,4 @@
-package org.localsend.localsend_app
+package com.fireboxtransfer.app
 
 import android.content.ContentResolver
 import android.content.Context

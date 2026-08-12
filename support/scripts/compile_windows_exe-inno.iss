@@ -11,11 +11,11 @@
   #define ResultDir "D:\inno-result"
 #endif
 
-#define MyAppName "LocalSend"
+#define MyAppName "FireBoxTransfer"
 #define MyAppVersion "1.17.0"
-#define MyAppPublisher "Tien Do Nam"
-#define MyAppURL "https://localsend.org"
-#define MyAppExeName "localsend_app.exe"
+#define MyAppPublisher "FireBoxTransfer"
+#define MyAppURL "https://fireboxtransfer.invalid"
+#define MyAppExeName "fireboxtransfer_app.exe"
 #define MyAppMsixHelper "localsend_msix_helper.msix"
 
 [Setup]
@@ -35,7 +35,7 @@ DisableProgramGroupPage=yes
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 OutputDir={#ResultDir}
-OutputBaseFilename=localsend
+OutputBaseFilename=fireboxtransfer
 SetupIconFile={#PayloadDir}\logo.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma
