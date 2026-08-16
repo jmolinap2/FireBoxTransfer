@@ -1,4 +1,5 @@
 pub mod common;
+pub mod firebox;
 pub mod internal;
 mod peer_ip;
 pub mod v2;
@@ -8,6 +9,7 @@ pub mod web;
 pub use peer_ip::PeerIp;
 
 use crate::crypto::cert::{fingerprint_from_cert_der, public_key_from_cert_der};
+use crate::http::server::firebox::{RemoteFsServerConfig, RemoteFsState};
 use crate::http::server::internal::{InternalConfig, InternalState};
 use crate::http::server::v2::ServerEventV2;
 use crate::http::server::web::{WebConfig, WebI18n};
@@ -91,6 +93,10 @@ pub struct AppState {
 
     /// State of the v2 protocol endpoints. `None` disables the v2 routes.
     v2: Option<Arc<V2State>>,
+
+    /// State of the FireBoxTransfer remote-filesystem endpoints. These routes
+    /// additionally require a verified client certificate per request.
+    pub(crate) remote_fs: Option<Arc<RemoteFsState>>,
 }
 
 impl AppState {
@@ -99,6 +105,7 @@ impl AppState {
         internal_config: Option<InternalConfig>,
         v2_config: Option<ServerConfigV2>,
         web_config: Option<WebConfig>,
+        remote_fs_config: Option<RemoteFsServerConfig>,
     ) -> Self {
         let v2 = v2_config.map(|config| {
             Arc::new(V2State {
@@ -119,6 +126,7 @@ impl AppState {
             None => (None, false, None),
         };
         let internal = internal_config.map(|config| Arc::new(InternalState::new(config)));
+        let remote_fs = remote_fs_config.map(|config| Arc::new(RemoteFsState::new(config)));
 
         Self {
             info,
@@ -133,6 +141,7 @@ impl AppState {
                 NonZeroUsize::new(200).unwrap(),
             ))),
             v2,
+            remote_fs,
         }
     }
 }
@@ -227,9 +236,66 @@ pub async fn start_with_port(
     web_config: Option<WebConfig>,
     stop_rx: oneshot::Receiver<()>,
 ) -> anyhow::Result<ServerHandle> {
+    start_with_port_impl(
+        port,
+        tls_config,
+        info,
+        internal_config,
+        v2_config,
+        web_config,
+        None,
+        stop_rx,
+    )
+    .await
+}
+
+/// Starts the compatible LocalSend server plus the FireBoxTransfer
+/// remote-filesystem API. TLS is required because every filesystem request is
+/// authenticated by the verified client-certificate fingerprint.
+#[allow(clippy::too_many_arguments)]
+pub async fn start_with_port_and_firebox(
+    port: u16,
+    tls_config: TlsConfig,
+    info: ClientInfo,
+    internal_config: Option<InternalConfig>,
+    v2_config: Option<ServerConfigV2>,
+    web_config: Option<WebConfig>,
+    remote_fs_config: RemoteFsServerConfig,
+    stop_rx: oneshot::Receiver<()>,
+) -> anyhow::Result<ServerHandle> {
+    start_with_port_impl(
+        port,
+        Some(tls_config),
+        info,
+        internal_config,
+        v2_config,
+        web_config,
+        Some(remote_fs_config),
+        stop_rx,
+    )
+    .await
+}
+
+#[allow(clippy::too_many_arguments)]
+async fn start_with_port_impl(
+    port: u16,
+    tls_config: Option<TlsConfig>,
+    info: ClientInfo,
+    internal_config: Option<InternalConfig>,
+    v2_config: Option<ServerConfigV2>,
+    web_config: Option<WebConfig>,
+    remote_fs_config: Option<RemoteFsServerConfig>,
+    stop_rx: oneshot::Receiver<()>,
+) -> anyhow::Result<ServerHandle> {
     let ipv4_socket_addr = SocketAddr::new(Ipv4Addr::UNSPECIFIED.into(), port);
     let info = Arc::new(Mutex::new(info));
-    let state = AppState::new(info.clone(), internal_config, v2_config, web_config);
+    let state = AppState::new(
+        info.clone(),
+        internal_config,
+        v2_config,
+        web_config,
+        remote_fs_config,
+    );
 
     let ipv4_listener = tokio::net::TcpListener::bind(ipv4_socket_addr).await?;
     // With port 0, the IPv6 listener must reuse the port the IPv4 listener got.
@@ -530,6 +596,14 @@ async fn handle_request_inner(mut req: Request<Incoming>) -> Result<Response<Box
     };
 
     let v2_enabled = state.v2.is_some();
+
+    if req
+        .uri()
+        .path()
+        .starts_with(crate::http::firebox::FIREBOX_API_BASE)
+    {
+        return Ok(firebox::handle(req, state, client_info).await);
+    }
 
     match (req.method(), req.uri().path()) {
         (&Method::GET, "/") => Ok(web::index(&state)),

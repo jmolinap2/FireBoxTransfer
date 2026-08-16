@@ -3,15 +3,15 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
+import '../frb_generated.dart';
+import 'model.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-import 'package:localsend_isolates/rust/api/model.dart';
-import 'package:localsend_isolates/rust/frb_generated.dart';
-
 part 'server.freezed.dart';
 
-// These functions are ignored because they are not marked as `pub`: `handle_server_event`, `handle_web_event`, `recv_opt`, `resolve_file_content`, `resolve_upload_target`, `stop`
-// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `ServerInstance`
+// These functions are ignored because they are not marked as `pub`: `handle_remote_fs_event`, `handle_server_event`, `handle_web_event`, `recv_opt`, `resolve_file_content`, `resolve_upload_target`, `start_server_impl`, `stop`, `take_remote_fs_responder`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `PendingRemoteFsResponder`, `ServerInstance`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `from`
 
 /// Starts the HTTP server on the given port (IPv4 and IPv6).
 /// The server runs until [RsHttpServer::stop] is called.
@@ -49,6 +49,37 @@ Future<RsHttpServer> startServer({
   verifyChecksums: verifyChecksums,
   web: web,
   showToken: showToken,
+);
+
+/// Starts the compatible LocalSend server with the authenticated
+/// FireBoxTransfer filesystem API enabled. Unlike [start_server], TLS is not
+/// optional in this entry point.
+Future<RsHttpServer> startServerWithRemoteFs({
+  required int port,
+  required TlsConfig tls,
+  required String alias,
+  required String version,
+  String? deviceModel,
+  DeviceType? deviceType,
+  required String fingerprint,
+  String? pin,
+  required bool verifyChecksums,
+  WebParams? web,
+  String? showToken,
+  required RemoteFsParams remoteFs,
+}) => RustLib.instance.api.crateApiServerStartServerWithRemoteFs(
+  port: port,
+  tls: tls,
+  alias: alias,
+  version: version,
+  deviceModel: deviceModel,
+  deviceType: deviceType,
+  fingerprint: fingerprint,
+  pin: pin,
+  verifyChecksums: verifyChecksums,
+  web: web,
+  showToken: showToken,
+  remoteFs: remoteFs,
 );
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RsHttpServer>>
@@ -117,6 +148,28 @@ abstract class RsHttpServer implements RustOpaqueInterface {
   /// Passing `None` declines the request.
   Future<void> respondPrepareUpload({List<String>? acceptedFileIds});
 
+  Future<void> respondRemoteFsDelete({required String requestId});
+
+  /// Answers metadata, create-directory, rename or move, all of which
+  /// return one entry. The request ID preserves their concrete HTTP context.
+  Future<void> respondRemoteFsEntry({required String requestId, required RemoteFsEntry entry});
+
+  /// Rejects any pending remote-filesystem request with a stable public
+  /// error. Provider exception text never crosses the HTTP boundary.
+  Future<void> respondRemoteFsError({required String requestId, required RemoteFsErrorCode error});
+
+  Future<void> respondRemoteFsList({required String requestId, required RemoteFsListResponse response});
+
+  /// Supplies a path or owned Android file descriptor for an authenticated
+  /// remote read. Core pulls it as a bounded stream and closes the descriptor.
+  Future<void> respondRemoteFsRead({required String requestId, required RemoteFsEntry entry, String? path, int? fileDescriptor});
+
+  Future<void> respondRemoteFsRoots({required String requestId, required List<RemoteFsRoot> roots});
+
+  /// Supplies a path or owned Android file descriptor for an authenticated
+  /// remote write and emits throttled progress plus its terminal result.
+  Stream<RsRemoteFsWriteTargetEvent> respondRemoteFsWrite({required String requestId, String? path, int? fileDescriptor});
+
   /// Stops the server.
   /// Returns after the listeners are closed, so the port can be bound again.
   Future<void> stop();
@@ -167,6 +220,57 @@ class RegisterDtoV2 {
           port == other.port &&
           protocol == other.protocol &&
           download == other.download;
+}
+
+/// Enables the FireBoxTransfer filesystem API. This is rejected unless [tls]
+/// is present, because every request is identified by its verified mTLS
+/// client-certificate fingerprint.
+class RemoteFsParams {
+  final BigInt maxWriteSize;
+
+  const RemoteFsParams({
+    required this.maxWriteSize,
+  });
+
+  @override
+  int get hashCode => maxWriteSize.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is RemoteFsParams && runtimeType == other.runtimeType && maxWriteSize == other.maxWriteSize;
+}
+
+class RsRemoteFsPeer {
+  final String ip;
+  final String certificateFingerprint;
+
+  const RsRemoteFsPeer({
+    required this.ip,
+    required this.certificateFingerprint,
+  });
+
+  @override
+  int get hashCode => ip.hashCode ^ certificateFingerprint.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RsRemoteFsPeer && runtimeType == other.runtimeType && ip == other.ip && certificateFingerprint == other.certificateFingerprint;
+}
+
+@freezed
+sealed class RsRemoteFsWriteTargetEvent with _$RsRemoteFsWriteTargetEvent {
+  const RsRemoteFsWriteTargetEvent._();
+
+  const factory RsRemoteFsWriteTargetEvent.progress({
+    required BigInt bytesWritten,
+  }) = RsRemoteFsWriteTargetEvent_Progress;
+  const factory RsRemoteFsWriteTargetEvent.completed({
+    required BigInt bytesWritten,
+  }) = RsRemoteFsWriteTargetEvent_Completed;
+  const factory RsRemoteFsWriteTargetEvent.failed({
+    required String error,
+  }) = RsRemoteFsWriteTargetEvent_Failed;
 }
 
 @freezed
@@ -252,6 +356,50 @@ sealed class RsServerEvent with _$RsServerEvent {
     /// Command-line arguments forwarded by the other application instance.
     required List<String> args,
   }) = RsServerEvent_Show;
+  const factory RsServerEvent.remoteFsRoots({
+    required String requestId,
+    required RsRemoteFsPeer peer,
+  }) = RsServerEvent_RemoteFsRoots;
+  const factory RsServerEvent.remoteFsList({
+    required String requestId,
+    required RsRemoteFsPeer peer,
+    required RemoteFsListRequest request,
+  }) = RsServerEvent_RemoteFsList;
+  const factory RsServerEvent.remoteFsMetadata({
+    required String requestId,
+    required RsRemoteFsPeer peer,
+    required RemoteFsLocation target,
+  }) = RsServerEvent_RemoteFsMetadata;
+  const factory RsServerEvent.remoteFsCreateDirectory({
+    required String requestId,
+    required RsRemoteFsPeer peer,
+    required RemoteFsCreateDirectoryRequest request,
+  }) = RsServerEvent_RemoteFsCreateDirectory;
+  const factory RsServerEvent.remoteFsRename({
+    required String requestId,
+    required RsRemoteFsPeer peer,
+    required RemoteFsRenameRequest request,
+  }) = RsServerEvent_RemoteFsRename;
+  const factory RsServerEvent.remoteFsMove({
+    required String requestId,
+    required RsRemoteFsPeer peer,
+    required RemoteFsMoveRequest request,
+  }) = RsServerEvent_RemoteFsMove;
+  const factory RsServerEvent.remoteFsDelete({
+    required String requestId,
+    required RsRemoteFsPeer peer,
+    required RemoteFsDeleteRequest request,
+  }) = RsServerEvent_RemoteFsDelete;
+  const factory RsServerEvent.remoteFsRead({
+    required String requestId,
+    required RsRemoteFsPeer peer,
+    required RemoteFsLocation target,
+  }) = RsServerEvent_RemoteFsRead;
+  const factory RsServerEvent.remoteFsWrite({
+    required String requestId,
+    required RsRemoteFsPeer peer,
+    required RemoteFsWriteRequest request,
+  }) = RsServerEvent_RemoteFsWrite;
 }
 
 enum SessionEndReasonV2 {

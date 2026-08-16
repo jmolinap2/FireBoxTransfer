@@ -7,6 +7,7 @@ import 'package:fireboxtransfer_app/model/state/server/server_state.dart';
 import 'package:fireboxtransfer_app/provider/network/server/controller/receive_controller.dart';
 import 'package:fireboxtransfer_app/provider/network/server/controller/send_controller.dart';
 import 'package:fireboxtransfer_app/provider/network/server/server_utils.dart';
+import 'package:fireboxtransfer_app/provider/remote_fs_access_provider.dart';
 import 'package:fireboxtransfer_app/provider/settings_provider.dart';
 import 'package:fireboxtransfer_app/util/alias_generator.dart';
 import 'package:localsend_isolates/constants.dart';
@@ -172,6 +173,7 @@ class ServerService extends Notifier<ServerState?> {
                   )
                 : null,
             showToken: settings.showToken,
+            remoteFsAccess: ref.read(remoteFsAccessProvider),
           ),
         );
 

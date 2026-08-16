@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:localsend_isolates/model/device.dart';
+import 'package:localsend_isolates/model/remote_fs_grant.dart';
 import 'package:localsend_isolates/rust/api/server.dart' show WebParams;
 import 'package:localsend_isolates/src/isolate/child/discovery_isolate.dart';
 import 'package:localsend_isolates/src/isolate/child/server_isolate.dart';
@@ -313,11 +314,14 @@ class IsolateHttpServerStartAction extends ReduxActionWithResult<IsolateControll
   /// application instance request this one to show itself. `null` disables it.
   final String? showToken;
 
+  final RemoteFsAccessConfig remoteFsAccess;
+
   IsolateHttpServerStartAction({
     required this.pin,
     required this.verifyChecksums,
     required this.web,
     required this.showToken,
+    required this.remoteFsAccess,
   });
 
   @override
@@ -335,9 +339,32 @@ class IsolateHttpServerStartAction extends ReduxActionWithResult<IsolateControll
           verifyChecksums: verifyChecksums,
           web: web,
           showToken: showToken,
+          remoteFsAccess: remoteFsAccess,
         ),
       ),
     );
+  }
+}
+
+/// Replaces the access snapshot used by the remote-filesystem routes.
+class IsolateHttpServerUpdateRemoteFsAccessAction extends ReduxAction<IsolateController, ParentIsolateState> {
+  final RemoteFsAccessConfig access;
+
+  IsolateHttpServerUpdateRemoteFsAccessAction({required this.access});
+
+  @override
+  ParentIsolateState reduce() {
+    final connection = state.httpServer;
+    if (connection == null) {
+      throw StateError('httpServer is not initialized');
+    }
+    connection.sendToIsolate(
+      SendToIsolateData(
+        syncState: null,
+        data: IsolateTask(data: HttpServerUpdateRemoteFsAccessTask(access: access)),
+      ),
+    );
+    return state;
   }
 }
 

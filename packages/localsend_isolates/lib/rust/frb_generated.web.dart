@@ -6,22 +6,21 @@
 // Static analysis wrongly picks the IO variant, thus ignore this
 // ignore_for_file: argument_type_not_assignable
 
+import 'api/cancel.dart';
+import 'api/crypto.dart';
+import 'api/discovery.dart';
+import 'api/filename.dart';
+import 'api/http.dart';
+import 'api/logging.dart';
+import 'api/metadata.dart';
+import 'api/model.dart';
+import 'api/server.dart';
+import 'api/stream.dart';
+import 'api/webrtc.dart';
 import 'dart:async';
 import 'dart:convert';
-
+import 'frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
-import 'package:localsend_isolates/rust/api/cancel.dart';
-import 'package:localsend_isolates/rust/api/crypto.dart';
-import 'package:localsend_isolates/rust/api/discovery.dart';
-import 'package:localsend_isolates/rust/api/filename.dart';
-import 'package:localsend_isolates/rust/api/http.dart';
-import 'package:localsend_isolates/rust/api/logging.dart';
-import 'package:localsend_isolates/rust/api/metadata.dart';
-import 'package:localsend_isolates/rust/api/model.dart';
-import 'package:localsend_isolates/rust/api/server.dart';
-import 'package:localsend_isolates/rust/api/stream.dart';
-import 'package:localsend_isolates/rust/api/webrtc.dart';
-import 'package:localsend_isolates/rust/frb_generated.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
@@ -65,6 +64,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_RsHttpServerPtr =>
       wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsHttpServer;
 
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_RsRemoteReadStreamPtr =>
+      wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream;
+
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw);
 
@@ -102,6 +104,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RsHttpServer dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsHttpServer(dynamic raw);
 
   @protected
+  RsRemoteReadStream dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream(dynamic raw);
+
+  @protected
   Dart2RustStreamSink dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(dynamic raw);
 
   @protected
@@ -133,6 +138,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RsHttpServer dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsHttpServer(dynamic raw);
+
+  @protected
+  RsRemoteReadStream dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream(dynamic raw);
 
   @protected
   FutureOr<void> Function(LsSignalingConnection)
@@ -183,6 +191,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RsHttpServer dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsHttpServer(dynamic raw);
 
   @protected
+  RsRemoteReadStream dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream(dynamic raw);
+
+  @protected
   Set<String> dco_decode_Set_String_None(dynamic raw);
 
   @protected
@@ -198,6 +209,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RustStreamSink<RsHashFileEvent> dco_decode_StreamSink_rs_hash_file_event_Sse(dynamic raw);
+
+  @protected
+  RustStreamSink<RsRemoteFsWriteEvent> dco_decode_StreamSink_rs_remote_fs_write_event_Sse(dynamic raw);
+
+  @protected
+  RustStreamSink<RsRemoteFsWriteTargetEvent> dco_decode_StreamSink_rs_remote_fs_write_target_event_Sse(dynamic raw);
 
   @protected
   RustStreamSink<RsServerEvent> dco_decode_StreamSink_rs_server_event_Sse(dynamic raw);
@@ -271,10 +288,46 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RegisterDtoV2 dco_decode_box_autoadd_register_dto_v_2(dynamic raw);
 
   @protected
+  RemoteFsCreateDirectoryRequest dco_decode_box_autoadd_remote_fs_create_directory_request(dynamic raw);
+
+  @protected
+  RemoteFsDeleteRequest dco_decode_box_autoadd_remote_fs_delete_request(dynamic raw);
+
+  @protected
+  RemoteFsEntry dco_decode_box_autoadd_remote_fs_entry(dynamic raw);
+
+  @protected
+  RemoteFsListRequest dco_decode_box_autoadd_remote_fs_list_request(dynamic raw);
+
+  @protected
+  RemoteFsListResponse dco_decode_box_autoadd_remote_fs_list_response(dynamic raw);
+
+  @protected
+  RemoteFsLocation dco_decode_box_autoadd_remote_fs_location(dynamic raw);
+
+  @protected
+  RemoteFsMoveRequest dco_decode_box_autoadd_remote_fs_move_request(dynamic raw);
+
+  @protected
+  RemoteFsParams dco_decode_box_autoadd_remote_fs_params(dynamic raw);
+
+  @protected
+  RemoteFsRenameRequest dco_decode_box_autoadd_remote_fs_rename_request(dynamic raw);
+
+  @protected
+  RemoteFsWriteRequest dco_decode_box_autoadd_remote_fs_write_request(dynamic raw);
+
+  @protected
   RsDiscoveredDevice dco_decode_box_autoadd_rs_discovered_device(dynamic raw);
 
   @protected
   RsHttpClientError dco_decode_box_autoadd_rs_http_client_error(dynamic raw);
+
+  @protected
+  RsRemoteFsClientError dco_decode_box_autoadd_rs_remote_fs_client_error(dynamic raw);
+
+  @protected
+  RsRemoteFsPeer dco_decode_box_autoadd_rs_remote_fs_peer(dynamic raw);
 
   @protected
   RTCSendFileResponse dco_decode_box_autoadd_rtc_send_file_response(dynamic raw);
@@ -284,6 +337,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int dco_decode_box_autoadd_u_32(dynamic raw);
+
+  @protected
+  BigInt dco_decode_box_autoadd_u_64(dynamic raw);
 
   @protected
   WebParams dco_decode_box_autoadd_web_params(dynamic raw);
@@ -349,6 +405,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<(String, String)> dco_decode_list_record_string_string(dynamic raw);
 
   @protected
+  List<RemoteFsCapability> dco_decode_list_remote_fs_capability(dynamic raw);
+
+  @protected
+  List<RemoteFsEntry> dco_decode_list_remote_fs_entry(dynamic raw);
+
+  @protected
+  List<RemoteFsRoot> dco_decode_list_remote_fs_root(dynamic raw);
+
+  @protected
   List<RsDeviceChannel> dco_decode_list_rs_device_channel(dynamic raw);
 
   @protected
@@ -387,6 +452,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int? dco_decode_opt_box_autoadd_u_32(dynamic raw);
+
+  @protected
+  BigInt? dco_decode_opt_box_autoadd_u_64(dynamic raw);
 
   @protected
   WebParams? dco_decode_opt_box_autoadd_web_params(dynamic raw);
@@ -440,6 +508,48 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RegisterResponseDto dco_decode_register_response_dto(dynamic raw);
 
   @protected
+  RemoteFsCapability dco_decode_remote_fs_capability(dynamic raw);
+
+  @protected
+  RemoteFsCreateDirectoryRequest dco_decode_remote_fs_create_directory_request(dynamic raw);
+
+  @protected
+  RemoteFsDeleteRequest dco_decode_remote_fs_delete_request(dynamic raw);
+
+  @protected
+  RemoteFsEntry dco_decode_remote_fs_entry(dynamic raw);
+
+  @protected
+  RemoteFsEntryType dco_decode_remote_fs_entry_type(dynamic raw);
+
+  @protected
+  RemoteFsErrorCode dco_decode_remote_fs_error_code(dynamic raw);
+
+  @protected
+  RemoteFsListRequest dco_decode_remote_fs_list_request(dynamic raw);
+
+  @protected
+  RemoteFsListResponse dco_decode_remote_fs_list_response(dynamic raw);
+
+  @protected
+  RemoteFsLocation dco_decode_remote_fs_location(dynamic raw);
+
+  @protected
+  RemoteFsMoveRequest dco_decode_remote_fs_move_request(dynamic raw);
+
+  @protected
+  RemoteFsParams dco_decode_remote_fs_params(dynamic raw);
+
+  @protected
+  RemoteFsRenameRequest dco_decode_remote_fs_rename_request(dynamic raw);
+
+  @protected
+  RemoteFsRoot dco_decode_remote_fs_root(dynamic raw);
+
+  @protected
+  RemoteFsWriteRequest dco_decode_remote_fs_write_request(dynamic raw);
+
+  @protected
   ResultWithPublicKeyRegisterResponseDto dco_decode_result_with_public_key_register_response_dto(dynamic raw);
 
   @protected
@@ -456,6 +566,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RsHttpClientError dco_decode_rs_http_client_error(dynamic raw);
+
+  @protected
+  RsRemoteFsClientError dco_decode_rs_remote_fs_client_error(dynamic raw);
+
+  @protected
+  RsRemoteFsPeer dco_decode_rs_remote_fs_peer(dynamic raw);
+
+  @protected
+  RsRemoteFsWriteEvent dco_decode_rs_remote_fs_write_event(dynamic raw);
+
+  @protected
+  RsRemoteFsWriteTargetEvent dco_decode_rs_remote_fs_write_target_event(dynamic raw);
 
   @protected
   RsServerEvent dco_decode_rs_server_event(dynamic raw);
@@ -566,6 +688,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RsHttpServer sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsHttpServer(SseDeserializer deserializer);
 
   @protected
+  RsRemoteReadStream sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   Dart2RustStreamSink sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
     SseDeserializer deserializer,
   );
@@ -607,6 +734,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RsHttpServer sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsHttpServer(SseDeserializer deserializer);
+
+  @protected
+  RsRemoteReadStream sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream(
+    SseDeserializer deserializer,
+  );
 
   @protected
   Object sse_decode_DartOpaque(SseDeserializer deserializer);
@@ -653,6 +785,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RsHttpServer sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsHttpServer(SseDeserializer deserializer);
 
   @protected
+  RsRemoteReadStream sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream(SseDeserializer deserializer);
+
+  @protected
   Set<String> sse_decode_Set_String_None(SseDeserializer deserializer);
 
   @protected
@@ -668,6 +803,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RustStreamSink<RsHashFileEvent> sse_decode_StreamSink_rs_hash_file_event_Sse(SseDeserializer deserializer);
+
+  @protected
+  RustStreamSink<RsRemoteFsWriteEvent> sse_decode_StreamSink_rs_remote_fs_write_event_Sse(SseDeserializer deserializer);
+
+  @protected
+  RustStreamSink<RsRemoteFsWriteTargetEvent> sse_decode_StreamSink_rs_remote_fs_write_target_event_Sse(SseDeserializer deserializer);
 
   @protected
   RustStreamSink<RsServerEvent> sse_decode_StreamSink_rs_server_event_Sse(SseDeserializer deserializer);
@@ -741,10 +882,46 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RegisterDtoV2 sse_decode_box_autoadd_register_dto_v_2(SseDeserializer deserializer);
 
   @protected
+  RemoteFsCreateDirectoryRequest sse_decode_box_autoadd_remote_fs_create_directory_request(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsDeleteRequest sse_decode_box_autoadd_remote_fs_delete_request(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsEntry sse_decode_box_autoadd_remote_fs_entry(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsListRequest sse_decode_box_autoadd_remote_fs_list_request(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsListResponse sse_decode_box_autoadd_remote_fs_list_response(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsLocation sse_decode_box_autoadd_remote_fs_location(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsMoveRequest sse_decode_box_autoadd_remote_fs_move_request(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsParams sse_decode_box_autoadd_remote_fs_params(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsRenameRequest sse_decode_box_autoadd_remote_fs_rename_request(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsWriteRequest sse_decode_box_autoadd_remote_fs_write_request(SseDeserializer deserializer);
+
+  @protected
   RsDiscoveredDevice sse_decode_box_autoadd_rs_discovered_device(SseDeserializer deserializer);
 
   @protected
   RsHttpClientError sse_decode_box_autoadd_rs_http_client_error(SseDeserializer deserializer);
+
+  @protected
+  RsRemoteFsClientError sse_decode_box_autoadd_rs_remote_fs_client_error(SseDeserializer deserializer);
+
+  @protected
+  RsRemoteFsPeer sse_decode_box_autoadd_rs_remote_fs_peer(SseDeserializer deserializer);
 
   @protected
   RTCSendFileResponse sse_decode_box_autoadd_rtc_send_file_response(SseDeserializer deserializer);
@@ -754,6 +931,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
+
+  @protected
+  BigInt sse_decode_box_autoadd_u_64(SseDeserializer deserializer);
 
   @protected
   WebParams sse_decode_box_autoadd_web_params(SseDeserializer deserializer);
@@ -819,6 +999,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<(String, String)> sse_decode_list_record_string_string(SseDeserializer deserializer);
 
   @protected
+  List<RemoteFsCapability> sse_decode_list_remote_fs_capability(SseDeserializer deserializer);
+
+  @protected
+  List<RemoteFsEntry> sse_decode_list_remote_fs_entry(SseDeserializer deserializer);
+
+  @protected
+  List<RemoteFsRoot> sse_decode_list_remote_fs_root(SseDeserializer deserializer);
+
+  @protected
   List<RsDeviceChannel> sse_decode_list_rs_device_channel(SseDeserializer deserializer);
 
   @protected
@@ -859,6 +1048,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int? sse_decode_opt_box_autoadd_u_32(SseDeserializer deserializer);
+
+  @protected
+  BigInt? sse_decode_opt_box_autoadd_u_64(SseDeserializer deserializer);
 
   @protected
   WebParams? sse_decode_opt_box_autoadd_web_params(SseDeserializer deserializer);
@@ -912,6 +1104,48 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RegisterResponseDto sse_decode_register_response_dto(SseDeserializer deserializer);
 
   @protected
+  RemoteFsCapability sse_decode_remote_fs_capability(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsCreateDirectoryRequest sse_decode_remote_fs_create_directory_request(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsDeleteRequest sse_decode_remote_fs_delete_request(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsEntry sse_decode_remote_fs_entry(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsEntryType sse_decode_remote_fs_entry_type(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsErrorCode sse_decode_remote_fs_error_code(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsListRequest sse_decode_remote_fs_list_request(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsListResponse sse_decode_remote_fs_list_response(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsLocation sse_decode_remote_fs_location(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsMoveRequest sse_decode_remote_fs_move_request(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsParams sse_decode_remote_fs_params(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsRenameRequest sse_decode_remote_fs_rename_request(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsRoot sse_decode_remote_fs_root(SseDeserializer deserializer);
+
+  @protected
+  RemoteFsWriteRequest sse_decode_remote_fs_write_request(SseDeserializer deserializer);
+
+  @protected
   ResultWithPublicKeyRegisterResponseDto sse_decode_result_with_public_key_register_response_dto(SseDeserializer deserializer);
 
   @protected
@@ -928,6 +1162,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RsHttpClientError sse_decode_rs_http_client_error(SseDeserializer deserializer);
+
+  @protected
+  RsRemoteFsClientError sse_decode_rs_remote_fs_client_error(SseDeserializer deserializer);
+
+  @protected
+  RsRemoteFsPeer sse_decode_rs_remote_fs_peer(SseDeserializer deserializer);
+
+  @protected
+  RsRemoteFsWriteEvent sse_decode_rs_remote_fs_write_event(SseDeserializer deserializer);
+
+  @protected
+  RsRemoteFsWriteTargetEvent sse_decode_rs_remote_fs_write_target_event(SseDeserializer deserializer);
 
   @protected
   RsServerEvent sse_decode_rs_server_event(SseDeserializer deserializer);
@@ -1050,6 +1296,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsHttpServer(RsHttpServer self, SseSerializer serializer);
 
   @protected
+  void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream(
+    RsRemoteReadStream self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
     Dart2RustStreamSink self,
     SseSerializer serializer,
@@ -1102,6 +1354,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsHttpServer(RsHttpServer self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream(
+    RsRemoteReadStream self,
+    SseSerializer serializer,
+  );
 
   @protected
   void
@@ -1168,6 +1426,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsHttpServer(RsHttpServer self, SseSerializer serializer);
 
   @protected
+  void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream(RsRemoteReadStream self, SseSerializer serializer);
+
+  @protected
   void sse_encode_Set_String_None(Set<String> self, SseSerializer serializer);
 
   @protected
@@ -1184,6 +1445,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_StreamSink_rs_hash_file_event_Sse(RustStreamSink<RsHashFileEvent> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_StreamSink_rs_remote_fs_write_event_Sse(RustStreamSink<RsRemoteFsWriteEvent> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_StreamSink_rs_remote_fs_write_target_event_Sse(RustStreamSink<RsRemoteFsWriteTargetEvent> self, SseSerializer serializer);
 
   @protected
   void sse_encode_StreamSink_rs_server_event_Sse(RustStreamSink<RsServerEvent> self, SseSerializer serializer);
@@ -1258,10 +1525,46 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_box_autoadd_register_dto_v_2(RegisterDtoV2 self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_remote_fs_create_directory_request(RemoteFsCreateDirectoryRequest self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_remote_fs_delete_request(RemoteFsDeleteRequest self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_remote_fs_entry(RemoteFsEntry self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_remote_fs_list_request(RemoteFsListRequest self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_remote_fs_list_response(RemoteFsListResponse self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_remote_fs_location(RemoteFsLocation self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_remote_fs_move_request(RemoteFsMoveRequest self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_remote_fs_params(RemoteFsParams self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_remote_fs_rename_request(RemoteFsRenameRequest self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_remote_fs_write_request(RemoteFsWriteRequest self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_rs_discovered_device(RsDiscoveredDevice self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_rs_http_client_error(RsHttpClientError self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_rs_remote_fs_client_error(RsRemoteFsClientError self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_rs_remote_fs_peer(RsRemoteFsPeer self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_rtc_send_file_response(RTCSendFileResponse self, SseSerializer serializer);
@@ -1271,6 +1574,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_u_64(BigInt self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_web_params(WebParams self, SseSerializer serializer);
@@ -1336,6 +1642,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_list_record_string_string(List<(String, String)> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_remote_fs_capability(List<RemoteFsCapability> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_remote_fs_entry(List<RemoteFsEntry> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_remote_fs_root(List<RemoteFsRoot> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_rs_device_channel(List<RsDeviceChannel> self, SseSerializer serializer);
 
   @protected
@@ -1376,6 +1691,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_opt_box_autoadd_u_32(int? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_u_64(BigInt? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_box_autoadd_web_params(WebParams? self, SseSerializer serializer);
@@ -1430,6 +1748,48 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_register_response_dto(RegisterResponseDto self, SseSerializer serializer);
 
   @protected
+  void sse_encode_remote_fs_capability(RemoteFsCapability self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_remote_fs_create_directory_request(RemoteFsCreateDirectoryRequest self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_remote_fs_delete_request(RemoteFsDeleteRequest self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_remote_fs_entry(RemoteFsEntry self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_remote_fs_entry_type(RemoteFsEntryType self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_remote_fs_error_code(RemoteFsErrorCode self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_remote_fs_list_request(RemoteFsListRequest self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_remote_fs_list_response(RemoteFsListResponse self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_remote_fs_location(RemoteFsLocation self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_remote_fs_move_request(RemoteFsMoveRequest self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_remote_fs_params(RemoteFsParams self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_remote_fs_rename_request(RemoteFsRenameRequest self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_remote_fs_root(RemoteFsRoot self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_remote_fs_write_request(RemoteFsWriteRequest self, SseSerializer serializer);
+
+  @protected
   void sse_encode_result_with_public_key_register_response_dto(ResultWithPublicKeyRegisterResponseDto self, SseSerializer serializer);
 
   @protected
@@ -1446,6 +1806,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_rs_http_client_error(RsHttpClientError self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_rs_remote_fs_client_error(RsRemoteFsClientError self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_rs_remote_fs_peer(RsRemoteFsPeer self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_rs_remote_fs_write_event(RsRemoteFsWriteEvent self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_rs_remote_fs_write_target_event(RsRemoteFsWriteTargetEvent self, SseSerializer serializer);
 
   @protected
   void sse_encode_rs_server_event(RsServerEvent self, SseSerializer serializer);
@@ -1578,6 +1950,12 @@ class RustLibWire implements BaseWire {
 
   void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsHttpServer(int ptr) =>
       wasmModule.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsHttpServer(ptr);
+
+  void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream(int ptr) =>
+      wasmModule.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream(ptr);
+
+  void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream(int ptr) =>
+      wasmModule.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream(ptr);
 }
 
 @JS('wasm_bindgen')
@@ -1629,4 +2007,8 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
   external void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsHttpServer(int ptr);
 
   external void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsHttpServer(int ptr);
+
+  external void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream(int ptr);
+
+  external void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRsRemoteReadStream(int ptr);
 }

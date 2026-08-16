@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:fireboxtransfer_app/config/init.dart';
 import 'package:fireboxtransfer_app/config/theme.dart';
+import 'package:fireboxtransfer_app/features/explorer/widgets/explorer_tab.dart';
 import 'package:fireboxtransfer_app/gen/strings.g.dart';
 import 'package:fireboxtransfer_app/pages/home_page_controller.dart';
 import 'package:fireboxtransfer_app/pages/tabs/receive_tab.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 enum HomeTab {
+  explorer(Icons.folder_copy),
   receive(Icons.wifi),
   send(Icons.send),
   settings(Icons.settings)
@@ -26,6 +28,8 @@ enum HomeTab {
 
   String get label {
     switch (this) {
+      case HomeTab.explorer:
+        return t.general.files;
       case HomeTab.receive:
         return t.receiveTab.title;
       case HomeTab.send:
@@ -73,16 +77,19 @@ class _HomePageState extends State<HomePage> with Refena {
 
     return DropTarget(
       onDragEntered: (_) {
+        if (vm.currentTab == HomeTab.explorer) return;
         setState(() {
           _dragAndDropIndicator = true;
         });
       },
       onDragExited: (_) {
+        if (vm.currentTab == HomeTab.explorer) return;
         setState(() {
           _dragAndDropIndicator = false;
         });
       },
       onDragDone: (event) async {
+        if (vm.currentTab == HomeTab.explorer) return;
         if (event.files.length == 1 && Directory(event.files.first.path).existsSync()) {
           // user dropped a directory
           await ref.redux(selectedSendingFilesProvider).dispatchAsync(AddDirectoryAction(event.files.first.path));
@@ -139,6 +146,7 @@ class _HomePageState extends State<HomePage> with Refena {
                           controller: vm.controller,
                           physics: const NeverScrollableScrollPhysics(),
                           children: const [
+                            ExplorerTab(),
                             ReceiveTab(),
                             SendTab(),
                             SettingsTab(),

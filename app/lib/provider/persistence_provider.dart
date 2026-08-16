@@ -7,6 +7,7 @@ import 'package:fireboxtransfer_app/model/persistence/color_mode.dart';
 import 'package:fireboxtransfer_app/model/persistence/favorite_device.dart';
 import 'package:fireboxtransfer_app/model/persistence/quick_save_mode.dart';
 import 'package:fireboxtransfer_app/model/persistence/receive_history_entry.dart';
+import 'package:fireboxtransfer_app/model/persistence/shared_file_root.dart';
 import 'package:fireboxtransfer_app/model/send_mode.dart';
 import 'package:fireboxtransfer_app/provider/window_dimensions_provider.dart';
 import 'package:fireboxtransfer_app/util/alias_generator.dart';
@@ -57,6 +58,9 @@ const _receiveHistory = 'ls_receive_history';
 
 // Favorites
 const _favorites = 'ls_favorites';
+
+// Directories explicitly exposed to trusted FireBoxTransfer peers.
+const _sharedFileRoots = 'fireboxtransfer_shared_file_roots';
 
 // App Window Offset and Size info
 const _windowOffsetX = 'ls_window_offset_x';
@@ -270,6 +274,42 @@ class PersistenceService {
   Future<void> setFavorites(List<FavoriteDevice> entries) async {
     final favoritesRaw = entries.map((entry) => jsonEncode(entry.toJson())).toList();
     await _prefs.setStringList(_favorites, favoritesRaw);
+  }
+
+  List<SharedFileRoot> getSharedFileRoots() {
+    final rootsRaw = _prefs.getStringList(_sharedFileRoots) ?? const [];
+    final roots = <SharedFileRoot>[];
+    final ids = <String>{};
+    final locators = <String>{};
+    for (final entry in rootsRaw) {
+      try {
+        final decoded = jsonDecode(entry);
+        if (decoded is! Map) {
+          throw const FormatException('Shared root is not an object');
+        }
+        final root = SharedFileRoot.fromJson(decoded.cast<String, dynamic>());
+        if (!ids.add(root.id) || !locators.add(root.locator)) {
+          _logger.warning('Ignoring a duplicated shared root setting.');
+          continue;
+        }
+        roots.add(root);
+      } catch (error) {
+        // One damaged entry must not prevent the application or its server
+        // from starting. Do not include the serialized entry in the log: it
+        // contains a private local path or SAF URI.
+        _logger.warning(
+          'Ignoring an invalid shared root setting (${error.runtimeType}).',
+        );
+      }
+    }
+    return List.unmodifiable(roots);
+  }
+
+  Future<void> setSharedFileRoots(List<SharedFileRoot> roots) async {
+    await _prefs.setStringList(
+      _sharedFileRoots,
+      roots.map((root) => jsonEncode(root.toJson())).toList(growable: false),
+    );
   }
 
   String getShowToken() {

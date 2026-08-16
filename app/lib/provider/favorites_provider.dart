@@ -1,17 +1,34 @@
+import 'dart:async';
+
 import 'package:fireboxtransfer_app/model/persistence/favorite_device.dart';
 import 'package:fireboxtransfer_app/provider/persistence_provider.dart';
+import 'package:fireboxtransfer_app/provider/remote_fs_access_provider.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 
 /// This provider stores the list of favorite devices.
 /// It automatically saves the list to the device's storage.
 final favoritesProvider = ReduxProvider<FavoritesService, List<FavoriteDevice>>((ref) {
-  return FavoritesService(ref.read(persistenceProvider));
+  return FavoritesService(
+    ref.read(persistenceProvider),
+    onChanged: (favorites) => ref
+        .redux(remoteFsAccessProvider)
+        .dispatchAsync(
+          SetRemoteFsTrustedFingerprintsAction(
+            favorites.map((device) => device.fingerprint),
+          ),
+        ),
+  );
 });
 
 class FavoritesService extends ReduxNotifier<List<FavoriteDevice>> {
   final PersistenceService _persistence;
+  final FutureOr<void> Function(List<FavoriteDevice>)? _onChanged;
 
-  FavoritesService(this._persistence);
+  FavoritesService(this._persistence, {FutureOr<void> Function(List<FavoriteDevice>)? onChanged}) : _onChanged = onChanged;
+
+  Future<void> notifyChanged(List<FavoriteDevice> favorites) async {
+    await _onChanged?.call(favorites);
+  }
 
   @override
   List<FavoriteDevice> init() => _persistence.getFavorites();
@@ -30,6 +47,7 @@ class AddFavoriteAction extends AsyncReduxAction<FavoritesService, List<Favorite
       device,
     ]);
     await notifier._persistence.setFavorites(updated);
+    await notifier.notifyChanged(updated);
     return updated;
   }
 }
@@ -54,6 +72,7 @@ class UpdateFavoriteAction extends AsyncReduxAction<FavoritesService, List<Favor
       ]..replaceRange(index, index + 1, [device]),
     );
     await notifier._persistence.setFavorites(updated);
+    await notifier.notifyChanged(updated);
     return updated;
   }
 }
@@ -79,6 +98,7 @@ class RemoveFavoriteAction extends AsyncReduxAction<FavoritesService, List<Favor
       ]..removeAt(index),
     );
     await notifier._persistence.setFavorites(updated);
+    await notifier.notifyChanged(updated);
     return updated;
   }
 }

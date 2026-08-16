@@ -3,17 +3,17 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
+import '../frb_generated.dart';
+import 'cancel.dart';
+import 'model.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-import 'package:localsend_isolates/rust/api/cancel.dart';
-import 'package:localsend_isolates/rust/api/model.dart';
-import 'package:localsend_isolates/rust/api/stream.dart';
-import 'package:localsend_isolates/rust/frb_generated.dart';
-
+import 'stream.dart';
 part 'http.freezed.dart';
 
-// These functions are ignored because they are not marked as `pub`: `resolve_file_content`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `from`
+// These functions are ignored because they are not marked as `pub`: `message`, `require_remote_fs`, `resolve_file_content`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `RemoteReadState`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `from`, `from`
 
 /// Creates an HTTP client.
 ///
@@ -56,6 +56,38 @@ abstract class RsHttpClient implements RustOpaqueInterface {
     required RegisterDto payload,
   });
 
+  Future<RemoteFsEntry> remoteFsCreateDirectory({required String ip, required int port, required RemoteFsCreateDirectoryRequest request});
+
+  Future<void> remoteFsDelete({required String ip, required int port, required RemoteFsDeleteRequest request});
+
+  Future<RemoteFsListResponse> remoteFsList({required String ip, required int port, required RemoteFsListRequest request});
+
+  Future<RemoteFsEntry> remoteFsMetadata({required String ip, required int port, required RemoteFsLocation target});
+
+  Future<RemoteFsEntry> remoteFsMove({required String ip, required int port, required RemoteFsMoveRequest request});
+
+  /// Opens a pull-based remote read. Dart calls [RsRemoteReadStream::next_chunk]
+  /// for each chunk, which provides natural backpressure and bounds memory.
+  Future<RsRemoteReadStream> remoteFsOpenRead({required String ip, required int port, required RemoteFsLocation target});
+
+  Future<RemoteFsEntry> remoteFsRename({required String ip, required int port, required RemoteFsRenameRequest request});
+
+  Future<List<RemoteFsRoot>> remoteFsRoots({required String ip, required int port});
+
+  /// Streams local content to a remote authorized path. The source may be a
+  /// Dart stream, a path or an owned Android descriptor; exactly one is set.
+  Stream<RsRemoteFsWriteEvent> remoteFsWrite({
+    required String ip,
+    required int port,
+    required RemoteFsLocation target,
+    required bool overwrite,
+    Dart2RustStreamReceiver? binary,
+    String? path,
+    int? fileDescriptor,
+    required BigInt contentLength,
+    required RsCancellationToken cancelToken,
+  });
+
   /// Uploads a single file, emitting [RsUploadEvent]s on [sink].
   ///
   /// Failures are emitted as [RsUploadEvent::Failed] instead of being
@@ -76,6 +108,15 @@ abstract class RsHttpClient implements RustOpaqueInterface {
     required BigInt contentLength,
     required RsCancellationToken cancelToken,
   });
+}
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RsRemoteReadStream>>
+abstract class RsRemoteReadStream implements RustOpaqueInterface {
+  BigInt? contentLength();
+
+  String? contentType();
+
+  Future<Uint8List?> nextChunk({required RsCancellationToken cancelToken});
 }
 
 enum LsHttpClientVersion {
@@ -139,6 +180,52 @@ sealed class RsHttpClientError with _$RsHttpClientError implements FrbException 
   const factory RsHttpClientError.other(
     String field0,
   ) = RsHttpClientError_Other;
+}
+
+@freezed
+sealed class RsRemoteFsClientError with _$RsRemoteFsClientError implements FrbException {
+  const RsRemoteFsClientError._();
+
+  const factory RsRemoteFsClientError.remote({
+    required int status,
+    required RemoteFsErrorCode code,
+    required String message,
+  }) = RsRemoteFsClientError_Remote;
+  const factory RsRemoteFsClientError.setup(
+    String field0,
+  ) = RsRemoteFsClientError_Setup;
+  const factory RsRemoteFsClientError.reqwest(
+    String field0,
+  ) = RsRemoteFsClientError_Reqwest;
+  const factory RsRemoteFsClientError.json(
+    String field0,
+  ) = RsRemoteFsClientError_Json;
+  const factory RsRemoteFsClientError.io(
+    String field0,
+  ) = RsRemoteFsClientError_Io;
+  const factory RsRemoteFsClientError.invalidRequest({
+    required RemoteFsErrorCode code,
+  }) = RsRemoteFsClientError_InvalidRequest;
+  const factory RsRemoteFsClientError.invalidResponse() = RsRemoteFsClientError_InvalidResponse;
+  const factory RsRemoteFsClientError.cancelled() = RsRemoteFsClientError_Cancelled;
+  const factory RsRemoteFsClientError.other(
+    String field0,
+  ) = RsRemoteFsClientError_Other;
+}
+
+@freezed
+sealed class RsRemoteFsWriteEvent with _$RsRemoteFsWriteEvent {
+  const RsRemoteFsWriteEvent._();
+
+  const factory RsRemoteFsWriteEvent.progress({
+    required BigInt bytesWritten,
+  }) = RsRemoteFsWriteEvent_Progress;
+  const factory RsRemoteFsWriteEvent.completed({
+    required BigInt bytesWritten,
+  }) = RsRemoteFsWriteEvent_Completed;
+  const factory RsRemoteFsWriteEvent.failed({
+    required RsRemoteFsClientError error,
+  }) = RsRemoteFsWriteEvent_Failed;
 }
 
 @freezed

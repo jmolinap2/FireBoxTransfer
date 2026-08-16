@@ -3,10 +3,20 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
+import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:localsend_isolates/rust/frb_generated.dart';
 
 Future<(Dart2RustStreamSink, Dart2RustStreamReceiver)> createStream() => RustLib.instance.api.crateApiStreamCreateStream();
+
+/// Writes a Dart-produced byte stream to exactly one local target without
+/// buffering the complete file in memory. The channel provides backpressure.
+///
+/// On Android, ownership of `file_descriptor` is transferred to Rust and it
+/// is closed on success, error or cancellation. File descriptors are rejected
+/// on other platforms. The write succeeds only when exactly `expected_size`
+/// bytes were received.
+Future<BigInt> writeStreamToTarget({required Dart2RustStreamReceiver binary, String? path, int? fileDescriptor, required BigInt expectedSize}) =>
+    RustLib.instance.api.crateApiStreamWriteStreamToTarget(binary: binary, path: path, fileDescriptor: fileDescriptor, expectedSize: expectedSize);
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner< Dart2RustStreamReceiver>>
 abstract class Dart2RustStreamReceiver implements RustOpaqueInterface {}

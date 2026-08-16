@@ -25,24 +25,47 @@ class HttpServerService {
     required bool verifyChecksums,
     required WebParams? web,
     required String? showToken,
+    required bool enableRemoteFs,
   }) async {
     if (_server != null) {
       throw StateError('Server already running');
     }
+    if (enableRemoteFs && tls == null) {
+      throw ArgumentError.value(
+        tls,
+        'tls',
+        'Remote filesystem access requires HTTPS',
+      );
+    }
 
-    final server = await startServer(
-      port: port,
-      tls: tls,
-      alias: alias,
-      version: version,
-      deviceModel: deviceModel,
-      deviceType: deviceType,
-      fingerprint: fingerprint,
-      pin: pin,
-      verifyChecksums: verifyChecksums,
-      web: web,
-      showToken: showToken,
-    );
+    final server = enableRemoteFs
+        ? await startServerWithRemoteFs(
+            port: port,
+            tls: tls!,
+            alias: alias,
+            version: version,
+            deviceModel: deviceModel,
+            deviceType: deviceType,
+            fingerprint: fingerprint,
+            pin: pin,
+            verifyChecksums: verifyChecksums,
+            web: web,
+            showToken: showToken,
+            remoteFs: RemoteFsParams(maxWriteSize: BigInt.from(1) << 40),
+          )
+        : await startServer(
+            port: port,
+            tls: tls,
+            alias: alias,
+            version: version,
+            deviceModel: deviceModel,
+            deviceType: deviceType,
+            fingerprint: fingerprint,
+            pin: pin,
+            verifyChecksums: verifyChecksums,
+            web: web,
+            showToken: showToken,
+          );
     _server = server;
     return server.listen();
   }
@@ -120,6 +143,64 @@ class HttpServerService {
   /// Does nothing if the download was already answered via [respondFileDownload].
   Future<void> failFileDownload({required String sessionId, required String fileId}) async {
     await _requireServer().failFileDownload(sessionId: sessionId, fileId: fileId);
+  }
+
+  Future<void> respondRemoteFsRoots({
+    required String requestId,
+    required List<RemoteFsRoot> roots,
+  }) {
+    return _requireServer().respondRemoteFsRoots(requestId: requestId, roots: roots);
+  }
+
+  Future<void> respondRemoteFsList({
+    required String requestId,
+    required RemoteFsListResponse response,
+  }) {
+    return _requireServer().respondRemoteFsList(requestId: requestId, response: response);
+  }
+
+  Future<void> respondRemoteFsEntry({
+    required String requestId,
+    required RemoteFsEntry entry,
+  }) {
+    return _requireServer().respondRemoteFsEntry(requestId: requestId, entry: entry);
+  }
+
+  Future<void> respondRemoteFsDelete({required String requestId}) {
+    return _requireServer().respondRemoteFsDelete(requestId: requestId);
+  }
+
+  Future<void> respondRemoteFsError({
+    required String requestId,
+    required RemoteFsErrorCode error,
+  }) {
+    return _requireServer().respondRemoteFsError(requestId: requestId, error: error);
+  }
+
+  Future<void> respondRemoteFsRead({
+    required String requestId,
+    required RemoteFsEntry entry,
+    String? path,
+    int? fileDescriptor,
+  }) {
+    return _requireServer().respondRemoteFsRead(
+      requestId: requestId,
+      entry: entry,
+      path: path,
+      fileDescriptor: fileDescriptor,
+    );
+  }
+
+  Stream<RsRemoteFsWriteTargetEvent> respondRemoteFsWrite({
+    required String requestId,
+    String? path,
+    int? fileDescriptor,
+  }) {
+    return _requireServer().respondRemoteFsWrite(
+      requestId: requestId,
+      path: path,
+      fileDescriptor: fileDescriptor,
+    );
   }
 
   /// Stops the server. The event stream returned by [start] will end.

@@ -3,8 +3,10 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
+import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:localsend_isolates/rust/frb_generated.dart';
+
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `RemoteFsWriteResponse`
 
 enum DeviceType {
   mobile,
@@ -185,4 +187,275 @@ class RegisterResponseDto {
           deviceType == other.deviceType &&
           token == other.token &&
           hasWebInterface == other.hasWebInterface;
+}
+
+enum RemoteFsCapability {
+  browse,
+  read,
+  write,
+  createDirectory,
+  rename,
+  move,
+  delete,
+}
+
+class RemoteFsCreateDirectoryRequest {
+  final RemoteFsLocation parent;
+  final String name;
+
+  const RemoteFsCreateDirectoryRequest({
+    required this.parent,
+    required this.name,
+  });
+
+  @override
+  int get hashCode => parent.hashCode ^ name.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RemoteFsCreateDirectoryRequest && runtimeType == other.runtimeType && parent == other.parent && name == other.name;
+}
+
+class RemoteFsDeleteRequest {
+  final RemoteFsLocation target;
+  final bool recursive;
+
+  const RemoteFsDeleteRequest({
+    required this.target,
+    required this.recursive,
+  });
+
+  @override
+  int get hashCode => target.hashCode ^ recursive.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RemoteFsDeleteRequest && runtimeType == other.runtimeType && target == other.target && recursive == other.recursive;
+}
+
+class RemoteFsEntry {
+  final String name;
+  final String path;
+  final RemoteFsEntryType entryType;
+  final BigInt? size;
+  final String? modified;
+  final String? mimeType;
+  final List<RemoteFsCapability> capabilities;
+
+  const RemoteFsEntry({
+    required this.name,
+    required this.path,
+    required this.entryType,
+    this.size,
+    this.modified,
+    this.mimeType,
+    required this.capabilities,
+  });
+
+  @override
+  int get hashCode =>
+      name.hashCode ^ path.hashCode ^ entryType.hashCode ^ size.hashCode ^ modified.hashCode ^ mimeType.hashCode ^ capabilities.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RemoteFsEntry &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          path == other.path &&
+          entryType == other.entryType &&
+          size == other.size &&
+          modified == other.modified &&
+          mimeType == other.mimeType &&
+          capabilities == other.capabilities;
+}
+
+enum RemoteFsEntryType {
+  file,
+  directory,
+  other,
+}
+
+enum RemoteFsErrorCode {
+  unauthenticated,
+  untrustedDevice,
+  permissionDenied,
+  invalidRequest,
+  invalidPath,
+  invalidName,
+  rootNotFound,
+  notFound,
+  alreadyExists,
+  notDirectory,
+  isDirectory,
+  directoryNotEmpty,
+  conflict,
+  readOnly,
+  storageFull,
+  payloadTooLarge,
+  unsupported,
+  busy,
+  transferFailed,
+  unavailable,
+  internal,
+}
+
+class RemoteFsListRequest {
+  final RemoteFsLocation location;
+  final String? cursor;
+  final int limit;
+
+  const RemoteFsListRequest({
+    required this.location,
+    this.cursor,
+    required this.limit,
+  });
+
+  @override
+  int get hashCode => location.hashCode ^ cursor.hashCode ^ limit.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RemoteFsListRequest &&
+          runtimeType == other.runtimeType &&
+          location == other.location &&
+          cursor == other.cursor &&
+          limit == other.limit;
+}
+
+class RemoteFsListResponse {
+  final List<RemoteFsEntry> entries;
+  final String? nextCursor;
+
+  const RemoteFsListResponse({
+    required this.entries,
+    this.nextCursor,
+  });
+
+  @override
+  int get hashCode => entries.hashCode ^ nextCursor.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RemoteFsListResponse && runtimeType == other.runtimeType && entries == other.entries && nextCursor == other.nextCursor;
+}
+
+class RemoteFsLocation {
+  final String rootId;
+  final String path;
+
+  const RemoteFsLocation({
+    required this.rootId,
+    required this.path,
+  });
+
+  @override
+  int get hashCode => rootId.hashCode ^ path.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is RemoteFsLocation && runtimeType == other.runtimeType && rootId == other.rootId && path == other.path;
+}
+
+class RemoteFsMoveRequest {
+  final RemoteFsLocation source;
+  final RemoteFsLocation destinationParent;
+  final String? newName;
+  final bool overwrite;
+
+  const RemoteFsMoveRequest({
+    required this.source,
+    required this.destinationParent,
+    this.newName,
+    required this.overwrite,
+  });
+
+  @override
+  int get hashCode => source.hashCode ^ destinationParent.hashCode ^ newName.hashCode ^ overwrite.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RemoteFsMoveRequest &&
+          runtimeType == other.runtimeType &&
+          source == other.source &&
+          destinationParent == other.destinationParent &&
+          newName == other.newName &&
+          overwrite == other.overwrite;
+}
+
+class RemoteFsRenameRequest {
+  final RemoteFsLocation source;
+  final String newName;
+
+  const RemoteFsRenameRequest({
+    required this.source,
+    required this.newName,
+  });
+
+  @override
+  int get hashCode => source.hashCode ^ newName.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RemoteFsRenameRequest && runtimeType == other.runtimeType && source == other.source && newName == other.newName;
+}
+
+class RemoteFsRoot {
+  final String id;
+  final String displayName;
+  final List<RemoteFsCapability> capabilities;
+  final BigInt? totalBytes;
+  final BigInt? freeBytes;
+
+  const RemoteFsRoot({
+    required this.id,
+    required this.displayName,
+    required this.capabilities,
+    this.totalBytes,
+    this.freeBytes,
+  });
+
+  @override
+  int get hashCode => id.hashCode ^ displayName.hashCode ^ capabilities.hashCode ^ totalBytes.hashCode ^ freeBytes.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RemoteFsRoot &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          displayName == other.displayName &&
+          capabilities == other.capabilities &&
+          totalBytes == other.totalBytes &&
+          freeBytes == other.freeBytes;
+}
+
+class RemoteFsWriteRequest {
+  final RemoteFsLocation target;
+  final BigInt size;
+  final bool overwrite;
+
+  const RemoteFsWriteRequest({
+    required this.target,
+    required this.size,
+    required this.overwrite,
+  });
+
+  @override
+  int get hashCode => target.hashCode ^ size.hashCode ^ overwrite.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RemoteFsWriteRequest &&
+          runtimeType == other.runtimeType &&
+          target == other.target &&
+          size == other.size &&
+          overwrite == other.overwrite;
 }

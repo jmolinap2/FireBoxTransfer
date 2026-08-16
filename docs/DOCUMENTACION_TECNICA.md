@@ -173,6 +173,10 @@ RemoteFileSystemProvider
 
 La UI no debe conocer si está trabajando con una ruta local o remota.
 
+La especificación de la implementación, endpoints, aislamiento de rutas y
+límites entre las fases 2, 3 y 4 está en
+[`REMOTE_FILESYSTEM.md`](REMOTE_FILESYSTEM.md).
+
 ---
 
 ## 5. API de administración remota
